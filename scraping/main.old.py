@@ -1,19 +1,19 @@
 import psycopg2
 import time
 
-# Espera a que el servicio de PostgreSQL esté listo
+# Wait for PostgreSQL ready
 time.sleep(10)
 
-# Configuración de la conexión a la base de datos
+# Connection to DB configuration
 conn = psycopg2.connect(
-    host="scraping_postgres_v2", #172.22.0.9
+    host="scraping_postgres_v2",
     database="scraping_db",
     user="scraping_user",
     password="scraping_password",
     port="5432"
 )
 
-# Función para insertar datos de prueba en la base de datos
+# Insert test data to database function
 def insert_test_data():
     cursor = conn.cursor()
     cursor.execute("INSERT INTO test_data (name, value) VALUES ('Raymond', 100)")

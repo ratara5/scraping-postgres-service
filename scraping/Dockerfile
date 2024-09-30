@@ -1,6 +1,6 @@
 FROM python:3.8-slim
 
-# Instalar dependencias necesarias del sistema
+# Install neccesary dependences
 RUN apt-get update && apt-get install -y \
     iputils-ping \
     wget \
@@ -21,18 +21,18 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*  
-    # Limpieza de caché para reducir el tamaño de la imagen
+    # Clean cache in order to reduce image size
 
-# Copiar todo el contenido del proyecto al contenedor, incluido requirements.txt
+# Copy whole content from project to container, including requirements.txt
 COPY . /app
 
-# Establecer el directorio de trabajo
+# Indicate working directory
 WORKDIR /app
 
-# Agregar directorio a path
+# Add directory to path
 ENV PYTHONPATH="/app"
 
-# Instalar las dependencias de Python usando pip
+# Install python dependences
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Comando por defecto (opcional)
+# Default command (optional)

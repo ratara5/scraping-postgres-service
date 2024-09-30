@@ -47,7 +47,7 @@ def thursday_date(interval_string, year):
         months = [interval_string.split()[-1]]
 
     # To english months names translation
-    ##translated_months = [months_translation[m.lower()] for m in months]
+    ## translated_months = [months_translation[m.lower()] for m in months]
     translated_months = [Month.get_english_name(m) for m in months]
 
     # Step 2
@@ -66,7 +66,7 @@ def thursday_date(interval_string, year):
             date_value = f"1-{translated_months[1]}-{year}"       
 
     # Step 3
-    #date_value = datetime.strptime(pre_date_value, "%d-%B-%Y").date()
+    # date_value = datetime.strptime(pre_date_value, "%d-%B-%Y").date()
 
     return date_value
 

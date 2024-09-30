@@ -1,4 +1,6 @@
 import json, os
+import os
+from dotenv import load_dotenv
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -14,61 +16,37 @@ from selenium.webdriver.common.by import By
 from getpass import getuser
 
 def get_week_assignments(year, bimester):
-    #options=webdriver.ChromeOptions()
-    
-    #options.add_argument('--no-sandbox')
     
     options = Options()
     options.add_argument('--profile-directory=Default')
     options.add_argument('--start-maximized')
-    options.add_argument('--headless') # Ejecutar en modo sin cabeza
-    options.add_argument('--no-sandbox')  # Opción para entornos de contenedor
-    options.add_argument('--disable-dev-shm-usage')  # Para evitar problemas con el uso de memoria  
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')  # For container environments option
+    options.add_argument('--disable-dev-shm-usage')  # Avoid memory usage issues
     
-    options.add_argument("--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
-
-    #INSTANCE WEBDRIVER
-    #driver = webdriver.Chrome()
-    #driver.get("https://www.google.com/")
-
-    #service = Service('/usr/bin/chromedriver')
-    #driver = webdriver.Chrome(service=service, options=options)
-    #driver = webdriver.Chrome(ChromeDriverManager().install())
-
-    #service = Service(ChromeDriverManager(driver_version='129.0.6668.58').install()) #This version of ChromeDriver only supports Chrome version 114
-    #driver = webdriver.Chrome(service=service, options=options)
+    options.add_argument("--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36") # Network agent
     
-    # Inicialización del WebDriver
+    # WEBDRIVER INITIALIZATION
     service = Service(ChromeDriverManager(driver_version='129.0.6668.58').install())
     driver = webdriver.Chrome(service=service, options=options)
-
-    
     print('options', options)
     print('service', service)
 
-    #SURF TO WEB
-    bimester = ['noviembre', 'diciembre']
-    driver.get(f'https://www.jw.org/es/biblioteca/guia-actividades-reunion-testigos-jehova/{bimester[0]}-{bimester[1]}-{year}-mwb/')
-    #driver.get('https://www.jw.org/es')
-    #driver.get('https://www.google.com')
+    # SURF TO WEB
+    load_dotenv('../../.env')
+    driver.get(os.getenv('URL_PREFIX')+f'/{bimester[0]}-{bimester[1]}-{year}/mwb')
     print('driver: ', driver)
     print('url: ', driver.current_url)
     print('title: ', driver.title)
 
-    #COOKIES
+    # COOKIES
     def accept_cookies(popup):     
-        #try:
         cookies_accept = popup.find_element(By.XPATH, '//html/body/div[1]/div/div/button[1]')
         cookies_accept.click()
-            #print('Cookies aceptadas')
-        #except Exception as e: 
-            #print(f'Cookies aceptadas anteriormente o ha ocurrido un error (REMUEVA EL try del código)')
-            #print(f'Ha ocurrido el error {e}')
     
-    
-    print("Sinchronizing with container -> bimester", bimester)
-    #WEEKS
-    
+    print("Sinchronizing with container -> bimester: ", bimester)
+
+    # WEEKS
     container_main = WebDriverWait(driver,5).until(EC.presence_of_element_located((By.XPATH, '//div[@class="toc cms-clearfix"]')))
     weeks = container_main.find_elements(By.XPATH,'//div[@class="syn-body sqs   "]') #weeks in the WorkBook
     print('weeks', weeks)
@@ -87,29 +65,29 @@ def get_week_assignments(year, bimester):
                 flag_popup = True
             except TimeoutException:
                 print('Accept cookies popup is not present')
+
         if f"Lectura bíblica para la Conmemoración del {year}" in weekdays_a.text:
            continue
-        #else:
+
         w["weekdays"] = weekdays_a.text
         w["president"] = "Presidente"
 
-        #Clic in week
+        # Clic in week
         weekdays_a.click()
 
-        #Search reading
+        # Search reading
         header = WebDriverWait(driver,2).until(EC.presence_of_element_located((By.XPATH, '//header')))
         reading = header.find_elements(By.XPATH, '//h2/a/strong') #
         reading_text_list = list(map(lambda x: x.text, reading))
         w["reading"] = ' '.join(reading_text_list)
     
-        #Search sections
+        # Search sections
         bodytxt_div = WebDriverWait(driver,2).until(EC.presence_of_element_located((By.XPATH, '//div[@class="bodyTxt"]')))
         sections = bodytxt_div.find_elements(By.XPATH, '//h2')
         assignments = bodytxt_div.find_elements(By.XPATH, '//h3')
 
-        
         sections_array=[]
-        #sections_array.append({"president":"Presidente"})
+        # sections_array.append({"president":"Presidente"})
 
         # Section TESOROS
         section_object_1 = {}
@@ -138,7 +116,7 @@ def get_week_assignments(year, bimester):
         sections_array.append(section_object_2)
         
         
-        ## Section VIDA
+        # Section VIDA
         section_object_3 = {}
         section_object_3["section"] = sections[4].text
         assignments_vida_array = []
@@ -153,7 +131,7 @@ def get_week_assignments(year, bimester):
         new_assignments_vida_array = list(filter(lambda x: not "conclusión" in x, new_assignments_vida_array))
         section_object_3["assignments"] = new_assignments_vida_array 
         sections_array.append(section_object_3)
-        #sections_array.append({"final prayer":"Oración final"})
+        # sections_array.append({"final prayer":"Oración final"})
 
 
         w["sections"] = sections_array
@@ -165,10 +143,9 @@ def get_week_assignments(year, bimester):
 
     pretty_weeksprograms_object = json.dumps(weeksprograms_object, indent=4, ensure_ascii= False)
     print(pretty_weeksprograms_object)
-    #print(weeksprograms_object)
+    # print(weeksprograms_object)
 
-    #QUIT WEBDRIVER
+    # QUIT WEBDRIVER
     driver.quit()
 
-    return weeksprograms_object #pretty_weeksprograms_object 
-    #return "hola"
+    return weeksprograms_object # pretty_weeksprograms_object 

@@ -20,46 +20,26 @@ if current_month in [10, 12]:
     year = current_year + relativedelta(years=1)
 else:
     year = current_year
-# e.g year = '2024'
+# e.g year = 2024
 
 
-# data = new_discuss.get_week_assignments('2024', ['julio', 'agosto'])
 data = new_discuss.get_week_assignments(str(year), next_bimester)
 
 load_dotenv('../../.env')
-'''
-conn = psycopg2.connect(database=os.getenv('DB_NAME'),
-                        host=os.getenv('DB_HOST'),
-                        user=os.getenv('DB_USER'),
-                        password=os.getenv('DB_PASSWORD'),
-                        port=os.getenv('DB_PORT'))
-'''
-'''
-conn = psycopg2.connect(database='machado-ayfm',
-                        host='127.0.0.1',
-                        user='user',
-                        password='password',
-                        port='5432')
-'''
+
+
 conn = psycopg2.connect(
-    host=os.getenv('DB_HOST'), # my_postgres_container es un contenedor sincronizado (hecho en la terminal y de borrado automático) #"scraping_postgres_v2" es el container creado a partir de la imagen de este docker-compose
-    database=os.getenv('DB_NAME'), # scraping_db es una base de datos vacía para pruebas. machado-ayfm es una base de datos NUEVA que reemplazará a machado-ayfm de proyecto compose de machadostudents hasta el 9302024
+    host=os.getenv('DB_HOST'), # my_postgres_container is a sychronized container (created in terminal and automatized deleted) #"DB_HOST" is created container from image in this docker-compose.yaml
+    database=os.getenv('DB_NAME'), # scraping_db is a empty database for test. "DB-NAME" is a NEW database to replace the database for machadostudents compose project at 9302024
     user=os.getenv('DB_USER'),
     password=os.getenv('DB_PASSWORD'),
     port=os.getenv('DB_PORT')
 )
 
-# Al conectarse con la bd del proyecto machadostudents
-# DB_NAME=machado-ayfm
-# DB_USER=user
-# DB_PASS=password
-
 cursor = conn.cursor()
 
-# cursor.execute("SELECT * FROM students")
-# print(cursor.fetchone())
 
-# WARNING: TO see results here. new_discuss.get_week_Assignments must return weeksprogram_object. Musn't return pretty_weeksprogram_object
+# WARNING: To see results here. new_discuss.get_week_assignments must return weeksprogram_object. Musn't return pretty_weeksprogram_object
 # Iter data and make inserts
 for week in data["bimestral_program"]:
     
