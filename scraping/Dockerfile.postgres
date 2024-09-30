@@ -1,0 +1,4 @@
+FROM postgres:13
+
+# Copia init.sql al directorio de inicialización
+COPY db/init.sql /docker-entrypoint-initdb.d/init.sql

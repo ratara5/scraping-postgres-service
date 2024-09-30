@@ -1,0 +1,7 @@
+.env
+
+/scraping_venv/
+
+/scraping/screenshot.png
+
+**/__pycache__/

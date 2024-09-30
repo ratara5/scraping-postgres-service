@@ -1,0 +1,52 @@
+version: '3'
+services:
+  postgres_scraping_service:
+    image: my_postgres_image_v2:latest
+    build:
+      context: ./scraping  # Contexto para el Dockerfile de PostgreSQL
+      dockerfile: Dockerfile.postgres  # Dockerfile para la imagen de PostgreSQL
+    container_name: scraping_postgres_v2
+    environment:
+      POSTGRES_USER: scraping_user
+      POSTGRES_PASSWORD: scraping_password
+      POSTGRES_DB: scraping_db
+
+      # Al conectarse a la base de datos de proyecto machado students
+      # DB_NAME=machado-ayfm
+      # DB_USER=user
+      # DB_PASS=password
+
+    volumes:
+      - postgres-data:/var/lib/postgresql/data # postgres-data -> scraping_project_postgres-data sería un nuevo volumen # docker-postgresql_postgres-volume pertenece al proyecto que hasta octubre 2024 tiene datos usados en la aplicación machadostudents
+      #- ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      interval: 10s  # Verifica cada 10 segundos
+      timeout: 5s    # Espera 5 segundos para la respuesta
+      retries: 5     # Intenta 5 veces antes de marcar como fallo
+      start_period: 60s  # Tiempo de espera inicial antes de empezar a chequear
+    networks:
+      - scraping_airflow_network
+
+  scraping_service:
+    image: my_scraping_image_v2:latest
+    build:
+      context: ./scraping  # Contexto para tu Dockerfile de scraping
+      dockerfile: Dockerfile  # Dockerfile para tu imagen de scraping
+    container_name: scraping_service_v2
+    depends_on:
+      postgres_scraping_service:
+        condition: service_healthy
+    networks:
+      - scraping_airflow_network
+
+networks:
+  scraping_airflow_network:
+    external: true
+
+volumes:
+  postgres-data:
+    #external: true
