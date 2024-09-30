@@ -29,11 +29,11 @@ load_dotenv('../../.env')
 
 
 conn = psycopg2.connect(
-    host=os.getenv('DB_HOST'), # my_postgres_container is a sychronized container (created in terminal and automatized deleted) #"DB_HOST" is created container from image in this docker-compose.yaml
-    database=os.getenv('DB_NAME'), # scraping_db is a empty database for test. "DB-NAME" is a NEW database to replace the database for machadostudents compose project at 9302024
-    user=os.getenv('DB_USER'),
-    password=os.getenv('DB_PASSWORD'),
-    port=os.getenv('DB_PORT')
+    host=os.getenv('POSTGRES_HOST'), # my_postgres_container is a sychronized container (created in terminal and automatized deleted) #"DB_HOST" is created container from image in this docker-compose.yaml
+    database=os.getenv('POSTGRES_DB'), # scraping_db is a empty database for test. "DB-NAME" is a NEW database to replace the database for machadostudents compose project at 9302024
+    user=os.getenv('POSTGRES_USER'),
+    password=os.getenv('POSTGRES_PASSWORD'),
+    port=os.getenv('POSTGRES_PORT')
 )
 
 cursor = conn.cursor()

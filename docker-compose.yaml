@@ -7,14 +7,14 @@ services:
       dockerfile: Dockerfile.postgres  # PostgreSQL image Dockerfile
     container_name: scraping_postgres_v2
     environment:
-      POSTGRES_USER: scraping_user
-      POSTGRES_PASSWORD: scraping_password
-      POSTGRES_DB: scraping_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres-data:/var/lib/postgresql/data # postgres-data -> scraping_project_postgres-data would be a new volume # docker-postgresql_postgres-volume belongs to project which to 9302024 contains machadostudent aplication data
     restart: always
     ports:
-      - "5434:5432"
+      - "5434:5432" # (case1) host will be my linux for machadostudents java aplication (case2) host will be airflow for bimestral execution dag
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
       interval: 10s  # Check each 10 seconds
