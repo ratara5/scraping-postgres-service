@@ -16,7 +16,7 @@ def belong_to_month(day, month, year):
     except ValueError:
         return False
 
-def thursday_date(interval_string, year):
+def wednesday_date(interval_string, year):
     # Translation month names dictionary
     """
     months_translation = {
@@ -52,15 +52,15 @@ def thursday_date(interval_string, year):
 
     # Step 2
     if number_of_months == 1:
-        possible_thursday_day = int(interval_string.split('-')[0]) + 1
+        possible_wednesday_day = int(interval_string.split('-')[0]) + 2
         date_value = datetime.strptime(
-            f"{possible_thursday_day}-{translated_months[0]}-{year}", "%d-%B-%Y"
+            f"{possible_wednesday_day}-{translated_months[0]}-{year}", "%d-%B-%Y"
         )
     else:
-        possible_thursday_day = int(interval_string.split()[0]) + 1
-        if belong_to_month(possible_thursday_day, translated_months[0], year):
+        possible_wednesday_day = int(interval_string.split()[0]) + 2
+        if belong_to_month(possible_wednesday_day, translated_months[0], year):
             date_value = datetime.strptime(
-                f"{possible_thursday_day}-{translated_months[0]}-{year}", "%d-%B-%Y"
+                f"{possible_wednesday_day}-{translated_months[0]}-{year}", "%d-%B-%Y"
             )
         else:
             date_value = f"1-{translated_months[1]}-{year}"       
@@ -72,5 +72,5 @@ def thursday_date(interval_string, year):
 
 # Sample using
 # weekdate = "7-14 de enero"
-# date_value_result = thursday_date(weekdate, '2024')
+# date_value_result = wednesday_date(weekdate, '2024')
 # print(date_value_result)

@@ -4,28 +4,30 @@ from dotenv import load_dotenv
 import psycopg2
 from psycopg2 import sql
 from datetime import datetime, date
-from dateutil import relativedelta
+from dateutil.relativedelta import relativedelta
 
 from utils import bimester, validate_day
 from get_week_assignments import new_discuss
 
 
 current_month = date.today().month
-current_year = date.today().year
+# current_year = date.today().year
 # e.g bimester = ['julio', 'agosto']
 
 next_bimester = bimester.get_next_bimester(current_month)
+print('next bimester: ', next_bimester)
 
-if current_month in [10, 12]:
-    year = current_year + relativedelta(years=1)
+if current_month in [11, 12]:
+    date_next_year = date.today() + relativedelta(years=1)
+    year = date_next_year.year
 else:
-    year = current_year
+    year = date.today().year
 # e.g year = 2024
 
 
 data = new_discuss.get_week_assignments(str(year), next_bimester)
 
-load_dotenv('../../.env')
+load_dotenv('.env')
 
 
 conn = psycopg2.connect(
@@ -43,8 +45,8 @@ cursor = conn.cursor()
 # Iter data and make inserts
 for week in data["bimestral_program"]:
     
-    # Extract thursday date and convert it to DATE format
-    date_value = validate_day.thursday_date(week["weekdays"], year)
+    # Extract wednesday date and convert it to DATE format
+    date_value = validate_day.wednesday_date(week["weekdays"], year)
     
 
     # Insert reading

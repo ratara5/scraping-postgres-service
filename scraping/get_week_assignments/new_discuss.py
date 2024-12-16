@@ -33,8 +33,10 @@ def get_week_assignments(year, bimester):
     print('service', service)
 
     # SURF TO WEB
-    load_dotenv('../../.env')
-    driver.get(os.getenv('URL_PREFIX')+f'/{bimester[0]}-{bimester[1]}-{year}/mwb')
+    load_dotenv('../.env')
+    url_prefix = os.getenv('URL_PREFIX', 'https://www.jw.org/es/biblioteca/guia-actividades-reunion-testigos-jehova')
+    print(url_prefix)
+    driver.get(url_prefix + f'/{bimester[0]}-{bimester[1]}-{year}-mwb')
     print('driver: ', driver)
     print('url: ', driver.current_url)
     print('title: ', driver.title)
@@ -47,6 +49,7 @@ def get_week_assignments(year, bimester):
     print("Sinchronizing with container -> bimester: ", bimester)
 
     # WEEKS
+    driver.save_screenshot("screenshot.png")
     container_main = WebDriverWait(driver,5).until(EC.presence_of_element_located((By.XPATH, '//div[@class="toc cms-clearfix"]')))
     weeks = container_main.find_elements(By.XPATH,'//div[@class="syn-body sqs   "]') #weeks in the WorkBook
     print('weeks', weeks)
