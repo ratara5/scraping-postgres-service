@@ -16,6 +16,11 @@ from selenium.webdriver.common.by import By
 from getpass import getuser
 
 def get_week_assignments(year, bimester):
+
+    print('Hello Universe!')
+    with open("/app/output/archivo.txt", "w") as f:
+        f.write("Hola, mundo!\n")
+        f.write("Esta es una segunda línea.\n")
     
     options = Options()
     options.add_argument('--profile-directory=Default')
@@ -43,9 +48,9 @@ def get_week_assignments(year, bimester):
 
     # COOKIES
     def accept_cookies(popup):     
-        cookies_accept = popup.find_element(By.XPATH, '//html/body/div[1]/div/div/button[1]')
+        #cookies_accept = popup.find_element(By.XPATH, '//html/body/div[1]/div/div/button[1]')
+        cookies_accept = popup.find_element(By.XPATH, '//html/body/div[1]/section/div/button[1]') #Cambio del 8/17/2025
         cookies_accept.click()
-    
     print("Sinchronizing with container -> bimester: ", bimester)
 
     # WEEKS

@@ -30,6 +30,8 @@ services:
       context: ./scraping  # Scraping Dockerfile context 
       dockerfile: Dockerfile  # Scraping image Dockerfile
     container_name: scraping_service_v2
+    volumes:
+      - ./output:/app/output
     depends_on:
       postgres_scraping_service:
         condition: service_healthy
