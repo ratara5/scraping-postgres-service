@@ -1,4 +1,5 @@
 FROM python:3.8-slim
+# python:3.10-slim
 
 # Install neccesary dependences
 RUN apt-get update && apt-get install -y \
@@ -35,4 +36,5 @@ ENV PYTHONPATH="/app"
 # Install python dependences
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Default command (optional)
+# Default command (only for manual execution)
+#CMD [ "python", "main.py" ]
