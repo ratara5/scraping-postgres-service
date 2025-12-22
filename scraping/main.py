@@ -1,3 +1,4 @@
+import sys
 import os
 from dotenv import load_dotenv
 
@@ -9,6 +10,9 @@ from dateutil.relativedelta import relativedelta
 from utils import bimester, validate_day
 from get_week_assignments import new_discuss
 
+
+# Agregar la raíz del proyecto al sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 current_month = date.today().month
 # current_year = date.today().year
@@ -46,8 +50,8 @@ cursor = conn.cursor()
 for week in data["bimestral_program"]:
     
     # Extract wednesday date and convert it to DATE format
-    date_value = validate_day.wednesday_date(week["weekdays"], year)
-    
+    date_value = validate_day.get_date(week["weekdays"], year)
+
 
     # Insert reading
     insert_query = sql.SQL(
@@ -90,6 +94,7 @@ for week in data["bimestral_program"]:
         sql.Literal(date_value)
     )
     cursor.execute(insert_query)
+    #break #Para hacer solo un cambio en la bd y depurar
 
 # Confirm changes and close connection
 conn.commit()

@@ -3,6 +3,8 @@ import calendar
 
 from utils.month import Month
 
+MEET_DAY = "tuesday" # tuesday | wednesday | thursday
+
 def belong_to_month(day, month, year):
     try:
         # Get number of month from month name
@@ -16,7 +18,7 @@ def belong_to_month(day, month, year):
     except ValueError:
         return False
 
-def wednesday_date(interval_string, year):
+def get_date(interval_string, year):
     # Translation month names dictionary
     """
     months_translation = {
@@ -51,24 +53,30 @@ def wednesday_date(interval_string, year):
     translated_months = [Month.get_english_name(m) for m in months]
 
     # Step 2
+    days = list(calendar.day_name)
+    number_day_of_week = days.index(MEET_DAY.capitalize())
+
     if number_of_months == 1:
-        possible_wednesday_day = int(interval_string.split('-')[0]) + 2
+        number_day_of_month = int(interval_string.split('-')[0]) + number_day_of_week
         date_value = datetime.strptime(
-            f"{possible_wednesday_day}-{translated_months[0]}-{year}", "%d-%B-%Y"
+            f"{number_day_of_month}-{translated_months[0]}-{year}", "%d-%B-%Y"
         )
     else:
-        possible_wednesday_day = int(interval_string.split()[0]) + 2
-        if belong_to_month(possible_wednesday_day, translated_months[0], year):
+        number_day_of_month = int(interval_string.split()[0]) + number_day_of_week
+        if belong_to_month(number_day_of_month, translated_months[0], year):
             date_value = datetime.strptime(
-                f"{possible_wednesday_day}-{translated_months[0]}-{year}", "%d-%B-%Y"
+                f"{number_day_of_month}-{translated_months[0]}-{year}", "%d-%B-%Y"
             )
         else:
-            date_value = f"1-{translated_months[1]}-{year}"       
+            date_value = datetime.strptime(
+                f"1-{translated_months[1]}-{year}", "%d-%B-%Y"
+            )       
 
     # Step 3
     # date_value = datetime.strptime(pre_date_value, "%d-%B-%Y").date()
-
-    return date_value
+    print(date_value)
+ 
+    return date_value.date()
 
 # Sample using
 # weekdate = "7-14 de enero"
